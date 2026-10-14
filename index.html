@@ -137,6 +137,12 @@ document.getElementById('submitOrder').onclick=async function(){
     return;
   }
 
+  var paid=confirm('입금을 완료하셨나요?\n\n[확인] = YES, 입금 완료\n[취소] = NO, 아직 입금 전');
+  if(!paid){
+    alert('입금 후 다시 주문하기를 눌러 주세요.\n\n재료통장: 우리은행 1002-346-977622 / 김수진');
+    return;
+  }
+
   var btn=document.getElementById('submitOrder');
   var oldText=btn.textContent;
   btn.disabled=true;
@@ -176,8 +182,14 @@ document.getElementById('submitOrder').onclick=async function(){
     }
 
     var hasApron=items.some(function(x){return String(x.name||'').indexOf('앞치마')>=0;});
-    var msg='주문이 정상적으로 접수되었습니다.\n\n주문번호: '+orderNo+
-      '\n주문금액: '+won(payload.total_amount)+
+    var itemLines=items.map(function(x){
+      var option=x.variant?' ('+x.variant+')':'';
+      return '• '+x.name+option+' × '+x.qty+' = '+won(x.amount);
+    }).join('\n');
+    var msg='주문이 정상적으로 접수되었습니다.\n\n'+
+      '[주문내역]\n'+itemLines+
+      '\n\n주문번호: '+orderNo+
+      '\n총 주문금액: '+won(payload.total_amount)+
       '\n\n재료통장: 우리은행 1002-346-977622 / 김수진';
     if(hasApron){
       msg+='\n\n※ 스타폴리오 앞치마 금액은 별도 계좌\n우리은행 1005-304-713247 / 황종명';

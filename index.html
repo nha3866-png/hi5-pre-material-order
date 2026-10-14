@@ -166,16 +166,17 @@ document.getElementById('submitOrder').onclick=async function(){
       method:'POST',
       headers:{
         'apikey':API_KEY,
-        'Authorization':'Bearer '+API_KEY,
         'Content-Type':'application/json',
-        'Prefer':'return=representation'
+        'Prefer':'return=minimal'
       },
       body:JSON.stringify(payload)
     });
-    var data=null;
-    try{data=await res.json();}catch(e){}
     if(!res.ok){
-      var msg=(data&&data.message)?data.message:'HTTP '+res.status;
+      var msg='HTTP '+res.status;
+      try{
+        var data=await res.json();
+        if(data&&data.message)msg=data.message;
+      }catch(e){}
       throw new Error(msg);
     }
 
